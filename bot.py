@@ -18,7 +18,7 @@ chrome_options.add_argument("log-level=3")
 browser = webdriver.Chrome(options=chrome_options)
 browser.implicitly_wait(5)
 
-yag = yagmail.SMTP("wackydawg411", "Z1ggamugaz0ng.")
+yag = yagmail.SMTP("johndoe", "johndoe123.")
 init_site = "https://www.quizup.com/en/login"
 email = "example@email.com"
 pw = "example"
