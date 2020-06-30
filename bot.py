@@ -1,8 +1,10 @@
 import json
 from json.decoder import JSONDecodeError
+import yagmail
 from selenium import webdriver
 import time
 from time import sleep
+from datetime import datetime
 from termcolor import colored
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -16,9 +18,10 @@ chrome_options.add_argument("log-level=3")
 browser = webdriver.Chrome(options=chrome_options)
 browser.implicitly_wait(5)
 
+yag = yagmail.SMTP("wackydawg411", "Z1ggamugaz0ng.")
 init_site = "https://www.quizup.com/en/login"
-email = "wackydawg411@gmail.com"
-pw = "Comput3ch"
+email = "example@email.com"
+pw = "example"
 
 browser.get(init_site)
 
@@ -28,7 +31,7 @@ browser.find_element_by_id("password").send_keys(pw)
 browser.find_element_by_class_name("SubmitButton").click()
 
 # print("Monitoring global MARIO UNIVERSE.")
-# print("Monitoring global NAME THE FLAG.")
+print("Monitoring global NAME THE FLAG.")
 print("Monitoring global LOGOS.")
 print("Monitoring global NAME THE POKEMON.")
 
@@ -58,6 +61,7 @@ def get_xp_data(link):
         
 init_xp_data_1 = get_xp_data(logos_global)
 init_xp_data_2 = get_xp_data(name_the_pokemon_global)
+init_xp_data_3 = get_xp_data(name_the_flag_global)
 
 # print(response)
 # print(json.dumps(init_xp_data_1, indent=4))
@@ -66,6 +70,7 @@ print("Initial data loaded.")
 sleep(15)
 
 reported_players = []
+monitor_master_log = []
 
 def monitor(api_link, db):
     new_xp_data = get_xp_data(api_link)
@@ -79,8 +84,10 @@ def monitor(api_link, db):
                     pass
                 elif difference <= 1000:
                     print(colored("player {}: {} XP".format(player, difference), "green"))
+                    monitor_master_log.append("player {}: {} XP".format(player, difference))
                 elif difference > 1000:
                     print(colored("player {}: {} XP".format(player, difference), "red"))
+                    monitor_master_log.append("player {}: {} XP".format(player, difference))
                     reported_players.append(player)
             else:
                 print("Player not tracked: {}".format(player))
@@ -105,9 +112,36 @@ while (time.time() - start_time) < time_to_run:
 browser.quit()
 print("Monitoring complete.")
 
+# if reported_players:
+#     print("Following players are reported:")
+#     for r in reported_players:
+#         print(r)
+# else:
+#     print("No players reported!")
+
+content_line1 = "Hi Drew! \n \n Your QuizUP Monitoring session is complete. Here were the topics monitored:"
+content_line2 = ", ".join(["<b>LOGOS</b>", "<b>NAME THE FLAG</b>", "<b>NAME THE POKEMON</b>"])
+content_line3 = "<h2>Summary</h2>"
+content_line4 = "Account suspected: {}".format(len(reported_players))
+content_line5 = ""
 if reported_players:
-    print("Following players are reported:")
     for r in reported_players:
-        print(r)
-else:
-    print("No players reported!")
+        content_line5 += r + "\n"
+
+content_line6 = "Below is the XP log:"
+content_line7 = ""
+for m in monitor_master_log:
+    content_line7 += m + "\n"
+
+content_line8 = "\n This concludes the report. \n \n Sincerely, \n The Zenmark Team"
+
+try:
+    yag.send(to="kalaborative94@gmail.com", subject="Quizup XP Report: {}".format(datetime.today().isoformat()), contents=[
+        content_line1, content_line2, content_line3, content_line4, content_line5, content_line6, content_line7, content_line8
+    ])
+    print("Log successfully emailed.")
+
+except Exception as e:
+    print("Error generating log report. Email not sent. ")
+    print(e)
+
