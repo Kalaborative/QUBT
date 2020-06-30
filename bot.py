@@ -69,7 +69,7 @@ init_xp_data_3 = get_xp_data(name_the_flag_global)
 print("Initial data loaded.")
 sleep(15)
 
-reported_players = []
+reported_players = set()
 monitor_master_log = []
 
 def monitor(api_link, db):
@@ -88,7 +88,7 @@ def monitor(api_link, db):
                 elif difference > 1000:
                     print(colored("player {}: {} XP".format(player, difference), "red"))
                     monitor_master_log.append("player {}: {} XP".format(player, difference))
-                    reported_players.append(player)
+                    reported_players.add(player)
             else:
                 print("Player not tracked: {}".format(player))
 
@@ -122,7 +122,7 @@ print("Monitoring complete.")
 content_line1 = "Hi Drew! \n \n Your QuizUP Monitoring session is complete. Here were the topics monitored:"
 content_line2 = ", ".join(["<b>LOGOS</b>", "<b>NAME THE FLAG</b>", "<b>NAME THE POKEMON</b>"])
 content_line3 = "<h2>Summary</h2>"
-content_line4 = "Account suspected: {}".format(len(reported_players))
+content_line4 = "Accounts suspected: {}".format(len(reported_players))
 content_line5 = ""
 if reported_players:
     for r in reported_players:
