@@ -1,4 +1,5 @@
 import json
+from json.decoder import JSONDecodeError
 from selenium import webdriver
 import time
 from time import sleep
@@ -88,14 +89,18 @@ print("Monitoring...")
 start_time = time.time()
 
 while (time.time() - start_time) < time_to_run:
-    # print("Checking Mario Universe...")
-    monitor(logos_global, init_xp_data_1)
-    # print("Checking Name the Flag...")
-    monitor(name_the_pokemon_global, init_xp_data_2)
-    sleep(5)
-    init_xp_data_1 = get_xp_data(logos_global)
-    init_xp_data_2 = get_xp_data(name_the_pokemon_global)
-    sleep(60)
+    try:
+        # print("Checking Mario Universe...")
+        monitor(logos_global, init_xp_data_1)
+        # print("Checking Name the Flag...")
+        monitor(name_the_pokemon_global, init_xp_data_2)
+        sleep(5)
+        init_xp_data_1 = get_xp_data(logos_global)
+        init_xp_data_2 = get_xp_data(name_the_pokemon_global)
+        sleep(60)
+    except JSONDecodeError:
+        print("Error parsing table. Retrying in ten seconds.")
+        sleep(10)
 
 browser.quit()
 print("Monitoring complete.")
